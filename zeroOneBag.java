@@ -26,9 +26,11 @@ public class zeroOneBag extends JFrame {
 	private class showPanel extends JPanel {
 		private JLabel label1 = new JLabel("BagSize：");
 		private JTextField text = new JTextField(10);
-		private String[] mode = { "BackTrackint", "BranchAndBound" };		
+		private String[] mode = { "BackTrackint", "BranchAndBound",
+				"exhausivity", "dynamic"};		
 		private JComboBox algorithm = new JComboBox(mode);
 		private JButton button = new JButton("Start");
+		private JButton stopButton = new JButton("stop");
 				
 		private String[] column = { "Weight", "Values" };				
 		private String[][] content=new String[52][2];
@@ -56,6 +58,8 @@ public class zeroOneBag extends JFrame {
 		solutionData solution = new solutionData(goods);
 		backTracking back = new backTracking(bag, goods,solution);
 		BranchAndBound _branch = new BranchAndBound(bag, goods,solution);
+		exhausivity _exhausivity= new exhausivity(bag, goods, solution);
+		dynamic _dynamic=new dynamic(bag, goods, solution);
 		
 		public showPanel() {			
 			text.setBounds(100, 10, 20, 10);			
@@ -67,7 +71,9 @@ public class zeroOneBag extends JFrame {
 			panel1.add(algorithm);
 			panel1.add(Box.createRigidArea(new Dimension(10, 0)));
 			panel1.add(button);
-			panel1.add(Box.createRigidArea(new Dimension(1500, 0)));
+			panel1.add(Box.createRigidArea(new Dimension(10, 0)));
+			panel1.add(stopButton);
+			panel1.add(Box.createRigidArea(new Dimension(1400, 0)));
 			
 			data.setPreferredSize(new Dimension(200, 510));						
 			setLayout(new BorderLayout());
@@ -76,7 +82,6 @@ public class zeroOneBag extends JFrame {
 			setPreferredSize(new Dimension(2100, 900));
 			setBackground(Color.black);			
 			timer = new Timer(40, new ReboundListener());
-			addMouseListener(new DotsListener());
 
 			// 选择框监听事件
 			algorithm.addActionListener(new ActionListener() {
@@ -92,10 +97,40 @@ public class zeroOneBag extends JFrame {
 					initDatas();
 					if (modestr.equals(mode[0])) {
 						backTrackSolve();
-					} else{
+					} else if(modestr.equals(mode[1])){
 						branchAndBoundSolve();
+					}else if(modestr.equals(mode[2])){
+						exhausivitySolve();
+					}else if(modestr.equals(mode[3])){
+						dynamicSolve();
 					}
 					timer.start();
+				}
+				
+				public void dynamicSolve(){
+					point = _dynamic.getDrawPoint(goods.getNumbers()+1);
+					long t1 = System.currentTimeMillis();
+					_dynamic.solve();
+					long t2 = System.currentTimeMillis();
+					runTime = t2 - t1;
+					bestp=bag.getMaxValue();
+					string= _dynamic.showResult();
+					level = _dynamic.levelPoint();
+					drawList = _dynamic.getDrawList();
+					getBranchAndBoundPoint();
+				}
+				
+				public void exhausivitySolve(){
+					point = _exhausivity.getDrawPoint(goods.getNumbers()+1);
+					long t1 = System.currentTimeMillis();
+					_exhausivity.solve();
+					long t2 = System.currentTimeMillis();
+					runTime = t2 - t1;
+					bestp=bag.getMaxValue();
+					string=_exhausivity.showResult();
+					level = _exhausivity.levelPoint();
+					drawList=_exhausivity.getDrawList();
+					getBranchAndBoundPoint();
 				}
 				
 				public void backTrackSolve(){
@@ -139,20 +174,15 @@ public class zeroOneBag extends JFrame {
 					drawList.clear();
 				}
 			});
-		}
-
-		// 鼠标响应事件
-		private class DotsListener implements MouseListener {
-			public void mousePressed(MouseEvent event) {
-				if(mark && timer.isRunning())
-					timer.stop();
-				else
-					timer.start();
-			}
-			public void mouseClicked(MouseEvent event) {}
-			public void mouseReleased(MouseEvent event) {}
-			public void mouseEntered(MouseEvent event) {}
-			public void mouseExited(MouseEvent event) {}
+			
+			stopButton.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent event){
+					if(mark && timer.isRunning())
+						timer.stop();
+					else
+						timer.start();
+				}
+			});
 		}
 
 		// 时间相应事件

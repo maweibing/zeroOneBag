@@ -56,4 +56,9 @@ public class solutionData {
 	public void setNowSolution(int index, int element){
 		_nowSolution[index]=element;
 	}
+	
+	public void refreshBestSolution(){
+		for(int i=1;i<_nowSolution.length; i++)
+			_bestSolution[i]=_nowSolution[i];
+	}
 }
