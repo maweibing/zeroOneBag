@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.awt.event.*;
+import java.util.Hashtable;
 
 public class zeroOneBag extends JFrame {
 
@@ -53,13 +54,14 @@ public class zeroOneBag extends JFrame {
 		private int move, k, i, stepNum;						
 		private boolean mark=false;
 		
-		goodsData goods = new goodsData(table);
-		bagData bag = new bagData(text);
-		solutionData solution = new solutionData(goods);
-		backTracking back = new backTracking(bag, goods,solution);
-		BranchAndBound _branch = new BranchAndBound(bag, goods,solution);
-		exhausivity _exhausivity= new exhausivity(bag, goods, solution);
-		dynamic _dynamic=new dynamic(bag, goods, solution);
+		private goodsData _goods = new goodsData(table);
+		private bagData _bag = new bagData(text);
+		private solutionData _solution = new solutionData(_goods);
+		private backTracking _back = new backTracking(_bag, _goods, _solution);
+		private BranchAndBound _branch = new BranchAndBound(_bag, _goods, _solution);
+		private exhausivity _exhausivity= new exhausivity(_bag, _goods, _solution);
+		private dynamic _dynamic=new dynamic(_bag, _goods, _solution);		
+		private Hashtable hash=new Hashtable(4);
 		
 		public showPanel() {			
 			text.setBounds(100, 10, 20, 10);			
@@ -82,6 +84,11 @@ public class zeroOneBag extends JFrame {
 			setPreferredSize(new Dimension(2100, 900));
 			setBackground(Color.black);			
 			timer = new Timer(40, new ReboundListener());
+			
+			hash.put(mode[0], _back);
+			hash.put(mode[1], _branch);
+			hash.put(mode[2],  _exhausivity);
+			hash.put(mode[3],  _dynamic);
 
 			// 选择框监听事件
 			algorithm.addActionListener(new ActionListener() {
@@ -95,25 +102,31 @@ public class zeroOneBag extends JFrame {
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					initDatas();
-					if (modestr.equals(mode[0])) {
-						backTrackSolve();
-					} else if(modestr.equals(mode[1])){
-						branchAndBoundSolve();
-					}else if(modestr.equals(mode[2])){
-						exhausivitySolve();
-					}else if(modestr.equals(mode[3])){
-						dynamicSolve();
-					}
+					Algorithm _alrithm =(Algorithm) hash.get(modestr);
+					point = _alrithm.getDrawPoint(_goods.getNumbers()+1);
+					long t1 = System.currentTimeMillis();
+					_alrithm.solve();
+					long t2 = System.currentTimeMillis();
+					runTime = t2 - t1;
+					path = _alrithm.getPath();
+					bestp = _bag.getMaxValue();
+					string = _alrithm.showResult();
+					drawList = _alrithm.getDrawList();
+					level = _alrithm.levelPoint();										
+					if (modestr.equals(mode[0]))
+						getBacktrackPoint();
+					else
+						getBranchAndBoundPoint();
 					timer.start();
 				}
 				
 				public void dynamicSolve(){
-					point = _dynamic.getDrawPoint(goods.getNumbers()+1);
+					point = _dynamic.getDrawPoint(_goods.getNumbers()+1);
 					long t1 = System.currentTimeMillis();
 					_dynamic.solve();
 					long t2 = System.currentTimeMillis();
 					runTime = t2 - t1;
-					bestp=bag.getMaxValue();
+					bestp=_bag.getMaxValue();
 					string= _dynamic.showResult();
 					level = _dynamic.levelPoint();
 					drawList = _dynamic.getDrawList();
@@ -121,12 +134,12 @@ public class zeroOneBag extends JFrame {
 				}
 				
 				public void exhausivitySolve(){
-					point = _exhausivity.getDrawPoint(goods.getNumbers()+1);
+					point = _exhausivity.getDrawPoint(_goods.getNumbers()+1);
 					long t1 = System.currentTimeMillis();
 					_exhausivity.solve();
 					long t2 = System.currentTimeMillis();
 					runTime = t2 - t1;
-					bestp=bag.getMaxValue();
+					bestp=_bag.getMaxValue();
 					string=_exhausivity.showResult();
 					level = _exhausivity.levelPoint();
 					drawList=_exhausivity.getDrawList();
@@ -134,37 +147,37 @@ public class zeroOneBag extends JFrame {
 				}
 				
 				public void backTrackSolve(){
-					point = back.getDrawPoint(goods.getNumbers() + 1);
+					point = _back.getDrawPoint(_goods.getNumbers() + 1);
 					long t1 = System.currentTimeMillis();
-					back.backTrack(1);												
+					_back.solve();												
 					long t2 = System.currentTimeMillis();
 					runTime = t2 - t1;					
-					path = solution.getSolutionPath();
-					bestp = bag.getMaxValue();
-					string = back.showResult();
-					level = back.levelPoint();											
+					path = _solution.getSolutionPath();
+					bestp = _bag.getMaxValue();
+					string = _back.showResult();
+					level = _back.levelPoint();											
 					getBacktrackPoint();
 				}
 				
 				public void branchAndBoundSolve(){
-					point = _branch.getDrawPoint(goods.getNumbers() + 1);
+					point = _branch.getDrawPoint(_goods.getNumbers() + 1);
 					long t1 = System.currentTimeMillis();
 					_branch.knapsack();
 					long t2 = System.currentTimeMillis();
 					runTime = t2 - t1;					
-					bestp=bag.getMaxValue();
+					bestp=_bag.getMaxValue();
 					string = _branch.showResult();
-					drawList=_branch.getOffSet();
+					drawList=_branch.getDrawList();
 					level = _branch.levelPoint();
 					getBranchAndBoundPoint();
 				}
 				
 				public void initDatas(){
-					goods.initGoods();
-					goods.getValues();
-					goods.getWeight();
-					solution.initSolution();
-					bag.initBag();					
+					_goods.initGoods();
+					_goods.getValues();
+					_goods.getWeight();
+					_solution.initSolution();
+					_bag.initBag();					
 					i = 0;
 					stepNum=0;
 					mark = true;

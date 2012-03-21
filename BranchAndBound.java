@@ -6,13 +6,15 @@ public class BranchAndBound extends Algorithm{
 	private int nodeNum;
 	private float[] p,w;
 	private ArrayList<Point> offSet = new ArrayList<Point>();
-	private ArrayList<String> _heavyAndValues=new ArrayList<String>();
 	
 	public BranchAndBound(bagData bag,goodsData goods,solutionData solution){
 		super(bag, goods, solution);
 		offSet.clear();
 		_drawPoint.clear();
-		_heavyAndValues.clear();
+	}
+	
+	public void solve(){
+		knapsack();
 	}
 	
 	public float MaxKnapsack() {
@@ -229,6 +231,7 @@ public class BranchAndBound extends Algorithm{
 	}
 		
 	public ArrayList<String> levelPoint(){
+		_heavyAndValues.clear();
 		for (int j = 1; j < p.length; j++) {
 			String str = "(" + w[j] + " , " + p[j] + ")";
 			_heavyAndValues.add(str);
@@ -236,7 +239,7 @@ public class BranchAndBound extends Algorithm{
 		return _heavyAndValues;
 	}
 		
-	public ArrayList<Point> getOffSet(){
+	public ArrayList<Point> getDrawList(){
 		return offSet;
 	}
 	

@@ -3,8 +3,6 @@ import java.util.ArrayList;
 
 public class dynamic extends Algorithm{
 	int [][]m;
-	private ArrayList<String> _heavyAndValues=new ArrayList<String>();
-	private ArrayList<Point> _drawList= new ArrayList<Point>();
 	
 	public dynamic(bagData bag,goodsData goods,solutionData solution){
 		super(bag, goods, solution);
@@ -64,6 +62,7 @@ public class dynamic extends Algorithm{
 	}
 	
 	public ArrayList<String> levelPoint(){
+		_heavyAndValues.clear();
 		for(int i=0; i<_goods.getNumbers(); i++){
 			String result="("+_goods.getOneWeight(i)+" , "+
 				_goods.getOneValue(i)+")";
@@ -73,7 +72,6 @@ public class dynamic extends Algorithm{
 	}
 	
 	public ArrayList<Point> getDrawList(){
-		_drawList.clear();
 		int k=1;
 		for(int i=1;i<_solution.getBestSolutionSize();i++){
 			if(_solution.getBestSolution(i)==1)

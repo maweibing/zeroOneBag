@@ -1,14 +1,16 @@
 import java.util.ArrayList;
 
-public class backTracking extends Algorithm{
-	private ArrayList<String> _heavyAndValues=new ArrayList<String>();
+public class backTracking extends Algorithm{	
 	
 	public backTracking(bagData bag, goodsData goods, solutionData solution){
-		super(bag, goods, solution);
-		_heavyAndValues.clear();
+		super(bag, goods, solution);		
 	}
 	
-	public void backTrack(int level){
+	public void solve(){
+		backTrack(1);
+	}
+	
+	private void backTrack(int level){
 		if(level>_goods.getNumbers()){
 			if(_bag.getNowValue() > _bag.getMaxValue()){
 				_bag.setMaxValue(_bag.getNowValue());
@@ -34,6 +36,7 @@ public class backTracking extends Algorithm{
 	}
 	
 	public ArrayList<String> levelPoint(){
+		_heavyAndValues.clear();
 		for(int i=0; i<_goods.getNumbers(); i++){
 			String result="("+_goods.getOneWeight(i)+" , "+
 				_goods.getOneValue(i)+")";
@@ -42,4 +45,7 @@ public class backTracking extends Algorithm{
 		return _heavyAndValues;
 	}
 	
+	public ArrayList<Integer> getPath(){
+		return _solution.getSolutionPath();
+	}
 }

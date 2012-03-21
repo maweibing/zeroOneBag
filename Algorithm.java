@@ -6,14 +6,21 @@ public class Algorithm {
 	protected goodsData _goods;
 	protected solutionData _solution;
 	protected ArrayList<Point> _drawPoint=new ArrayList<Point>();
+	protected ArrayList<String> _heavyAndValues=new ArrayList<String>();
+	protected ArrayList<Point> _drawList= new ArrayList<Point>();
+	protected ArrayList<Integer> _path = new ArrayList<Integer>();
 	
 	public Algorithm(bagData bag, goodsData goods, solutionData solution){
 		_bag=bag;
 		_goods=goods;
 		_solution=solution;
+		_heavyAndValues.clear();
+		_drawList.clear();
+		_path.clear();
 	}
 	
 	public ArrayList<Point> getDrawPoint(int pointNum){
+		_drawPoint.clear();
 		final int Row=50;
 		int length, higth, col;
 		for (int j = 1; j <= pointNum; j++) {
@@ -37,4 +44,9 @@ public class Algorithm {
 		result+=" ]";
 		return result;
 	}
+	
+	public ArrayList<Integer> getPath(){return _path;}
+	public void solve(){}
+	public ArrayList<String> levelPoint(){return _heavyAndValues;}
+	public ArrayList<Point> getDrawList(){return _drawList;}
 }
