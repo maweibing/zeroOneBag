@@ -120,58 +120,6 @@ public class zeroOneBag extends JFrame {
 					timer.start();
 				}
 				
-				public void dynamicSolve(){
-					point = _dynamic.getDrawPoint(_goods.getNumbers()+1);
-					long t1 = System.currentTimeMillis();
-					_dynamic.solve();
-					long t2 = System.currentTimeMillis();
-					runTime = t2 - t1;
-					bestp=_bag.getMaxValue();
-					string= _dynamic.showResult();
-					level = _dynamic.levelPoint();
-					drawList = _dynamic.getDrawList();
-					getBranchAndBoundPoint();
-				}
-				
-				public void exhausivitySolve(){
-					point = _exhausivity.getDrawPoint(_goods.getNumbers()+1);
-					long t1 = System.currentTimeMillis();
-					_exhausivity.solve();
-					long t2 = System.currentTimeMillis();
-					runTime = t2 - t1;
-					bestp=_bag.getMaxValue();
-					string=_exhausivity.showResult();
-					level = _exhausivity.levelPoint();
-					drawList=_exhausivity.getDrawList();
-					getBranchAndBoundPoint();
-				}
-				
-				public void backTrackSolve(){
-					point = _back.getDrawPoint(_goods.getNumbers() + 1);
-					long t1 = System.currentTimeMillis();
-					_back.solve();												
-					long t2 = System.currentTimeMillis();
-					runTime = t2 - t1;					
-					path = _solution.getSolutionPath();
-					bestp = _bag.getMaxValue();
-					string = _back.showResult();
-					level = _back.levelPoint();											
-					getBacktrackPoint();
-				}
-				
-				public void branchAndBoundSolve(){
-					point = _branch.getDrawPoint(_goods.getNumbers() + 1);
-					long t1 = System.currentTimeMillis();
-					_branch.knapsack();
-					long t2 = System.currentTimeMillis();
-					runTime = t2 - t1;					
-					bestp=_bag.getMaxValue();
-					string = _branch.showResult();
-					drawList=_branch.getDrawList();
-					level = _branch.levelPoint();
-					getBranchAndBoundPoint();
-				}
-				
 				public void initDatas(){
 					_goods.initGoods();
 					_goods.getValues();
